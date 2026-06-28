@@ -1,6 +1,13 @@
 // Set本身add/delete/has的时间复杂度都是O(1)，它的本质是Hash
 // 而Array删除元素是O(n)，因为要移动后续元素
 // 所以滑动窗口、去重都是用Set
+/*
+    字符	ASCII
+    'A'	65
+    'Z'	90
+    'a'	97
+    'z'	122
+ */
 
 function lengthOfLongestSubstring(s: string): number {
     // 无重复字符的最长子串：3(Medium)
@@ -17,7 +24,7 @@ function lengthOfLongestSubstring(s: string): number {
      */
     // 这里的子串是『连续』的，所以 -> 滑动窗口
     // 左指针固定，右指针每往右一步，set.add一个元素...直到遇到重复元素，break
-    // ->左指针往右一步，set.delete一个元素
+    //  then->左指针往右一步，set.delete一个元素。重新看能否移动右指针
     let left = 0, right = 0, res = 0
     let set = new Set()
     while (left < s.length) {
@@ -89,3 +96,71 @@ function findAnagrams(s: string, p: string): number[] {
     }
 };
 // console.log(findAnagrams("cbaebabacd", "abc"))
+
+function minWindow(s: string, t: string): string {
+    // 最小覆盖子串：76(Hard)
+    /*
+    给定两个字符串 s 和 t，长度分别是 m 和 n，返回 s 中的 最短窗口 子串，使得该子串包含 t 中的每一个字符（包括重复字符）。如果没有这样的子串，返回空字符串 ""。
+    示例 1：
+    输入：s = "ADOBECODEBANC", t = "ABC"
+    输出："BANC"
+    解释：最小覆盖子串 "BANC" 包含来自字符串 t 的 'A'、'B' 和 'C'。
+    示例 2：
+    输入: s = "a", t = "aa"
+    输出: ""
+    解释: t 中两个字符 'a' 均应包含在 s 的子串中，因此没有符合条件的子字符串，返回空字符串。
+     */
+    // right一直右移，直到窗口满足条件；
+    //    -> 然后left一直右移，直到窗口不满足条件；
+    //    -> right再右移，以此类推
+    // 需要注意这里有可能有大写/小写，大小写当作不一样的字符，所以不方便用ASCII(或者需要开一个更大的数组)，不如直接用map
+    // 而且这里和 438 一样的思路，使用了need、totalNeed 避免反复比较
+    let left = 0, right = 0, totalNeed = 0
+    let res = '' //注意这里起始为空，所以后面计算最小res不能直接单纯比较大小
+    let map: Record<string, { ori: number; need: number }> = {}
+    for (let i = 0; i < t.length; i++) {
+        let cur = t[i]
+        if (!map[cur]) {
+            map[cur] = {
+                ori: 1,
+                need: 1,
+            }
+        } else {
+            map[cur].ori++
+            map[cur].need++
+        }
+        totalNeed++
+    }
+    while (left < s.length) {
+        while (right < s.length) {
+            if (totalNeed > 0) {
+                let cur = s[right]
+                if (map[cur]) {
+                    map[cur].need--
+                    if (map[cur].need >= 0) {
+                        totalNeed--
+                    }
+                }
+                right++
+            } else {
+                break
+            }
+        }
+        if (totalNeed === 0) { //!!!一定要记得加这一条判断，因为最后left收缩的时候，会有一些不符合条件的东西加进来，这一点和第3题是不一样的
+            let curRes = s.slice(left, right)
+            if (res === '' || curRes.length < res.length) {
+                res = curRes
+            }
+        }
+        let cur = s[left]
+        if (map[cur]) {
+            map[cur].need++
+            if (map[cur].need > 0) {
+                totalNeed++
+            }
+        }
+        left++
+    }
+    return res
+};
+// console.log(minWindow("ADOBECODEBANC", "ABC"))

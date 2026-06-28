@@ -80,3 +80,32 @@ function longestConsecutive(nums: number[]): number {
     return res
 };
 // console.log(longestConsecutive([100, 4, 200, 1, 3, 2]))
+
+function subarraySum(nums: number[], k: number): number {
+    // 和为 K 的子数组：560(Medium)
+    /*
+    给你一个整数数组 nums 和一个整数 k ，请你统计并返回 该数组中和为 k 的子数组的个数 。
+    子数组是数组中元素的连续非空序列。
+    示例 1：
+    输入：nums = [1,1,1], k = 2
+    输出：2
+    示例 2：
+    输入：nums = [1,2,3], k = 3
+    输出：2
+     */
+    // 这道题不能用滑动窗口，因为不一定都是正数
+    // 连续子数组 = 两个前序和相减
+    // 当我们得到一个前序和的数组，本质这就是一个两数之和
+    // 和 两数之和 的区别：!!!需要找到所有的答案!!! 所以hash表要存某个pre的值出现的全部数量
+    // pre2-pre1=k -> pre1=pre2-k
+    let sum = 0, res = 0
+    let mp = new Map()
+    mp.set(0, 1) //一定有一个前序和=0
+    for (let i = 0; i < nums.length; i++) {
+        sum += nums[i]
+        res += (mp.get(sum - k) || 0)
+        mp.set(sum, (mp.get(sum) || 0) + 1)
+    }
+    return res
+};
+// console.log(subarraySum([1, 2, 3], 3))
