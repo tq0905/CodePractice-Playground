@@ -134,3 +134,42 @@ function trap(height: number[]): number {
     return res
 };
 // console.log(trap([4, 2, 0, 3, 2, 5]))
+
+function rotate(nums: number[], k: number): void {
+    // 轮转数组：189(Medium)
+    /*
+    给定一个整数数组 nums，将数组中的元素向右轮转 k 个位置，其中 k 是非负数。
+    请注意，必须在不使用额外空间的情况下原地对数组进行操作。
+    输入: nums = [1,2,3,4,5,6,7], k = 3
+    输出: [5,6,7,1,2,3,4]
+    输入：nums = [-1,-100,3,99], k = 2
+    输出：[3,99,-1,-100]
+     */
+    // 三次翻转法，原地 O(1) 空间：
+    //   1. 先对 k 取模（k 可能大于数组长度）：k = k % n
+    //   2. 翻转整个数组      [1,2,3,4,5,6,7] -> [7,6,5,4,3,2,1]
+    //   3. 翻转前 k 个        [7,6,5 | ...]   -> [5,6,7 | 4,3,2,1]
+    //   4. 翻转剩下的 n-k 个  [... | 4,3,2,1] -> [... | 1,2,3,4]
+    //   5. !!!翻转方法：左指针从最左开始，右指针从最右，每次交换左右指针的值!!!
+    const n = nums.length
+    k = k % n
+    // 三次翻转法
+    reverse(nums, 0, n - 1)
+    reverse(nums, 0, k - 1)
+    reverse(nums, k, n - 1)
+    function reverse(arr: number[], start: number, end: number) {
+        while (start < end) {
+            [arr[start], arr[end]] = [arr[end], arr[start]]
+            start++
+            end--
+        }
+    }
+
+    // 普通方法
+    // const pre = nums.slice(n - k)
+    // const suf = nums.slice(0, n - k)
+    // nums.splice(0, n, ...pre, ...suf)
+};
+// let arr = [1, 2, 3, 4, 5, 6, 7]
+// rotate(arr, 3)
+// console.log(arr)

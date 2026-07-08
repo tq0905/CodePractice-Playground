@@ -81,6 +81,8 @@ arr.unshift(0)      // 头部添加，返回新长度
 arr.shift()         // 头部删除，返回被删元素
 arr.splice(1, 2)    // 从索引1删2个，返回被删部分 [2,3]，arr = [1, 4, 5]
 arr.splice(1, 0, 99) // 从索引1插入99，不删除，返回[]，原arr被修改为[1, 99, 4, 5]
+arr.splice(start, deleteCount, item1, item2, ...itemN) // 参数个数可以无限
+arr.splice(start, deleteCount, ...arr1, ...arr2) // 因此常有写法
 
 // 截取 (不修改原数组)
 arr.slice(1, 3)     // [2, 3] 不包含end
@@ -248,6 +250,7 @@ let {name, age} = {name: "Tom", age: 20};
 
 // 交换变量
 [a, b] = [b, a];
+[nums[start], nums[end]] = [nums[end], nums[start]]
 
 // 展开
 let arr2 = [...arr, ...arr]; // 合并数组

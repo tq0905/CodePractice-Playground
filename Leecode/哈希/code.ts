@@ -109,3 +109,44 @@ function subarraySum(nums: number[], k: number): number {
     return res
 };
 // console.log(subarraySum([1, 2, 3], 3))
+
+function firstMissingPositive(nums: number[]): number {
+    // 缺失的第一个正数：41(Hard)
+    /*
+    给你一个未排序的整数数组 nums ，请你找出其中没有出现的最小的正整数。
+    要求时间复杂度为 O(n) 且只使用常数级别额外空间。
+    示例 1：
+    输入：nums = [1,2,0]      输出：3
+    示例 2：
+    输入：nums = [3,4,-1,1]   输出：2
+    示例 3：
+    输入：nums = [7,8,9,11,12] 输出：1
+     */
+    // 思路：原地哈希（把数组本身当哈希表）
+    // 长度为 n 的数组，答案一定在 [1, n+1] 范围内
+    //    如果 1~n 全都出现了 → 答案是 n+1；
+    //    否则答案就是 1~n 中第一个缺失的数。
+    //    所以：只有>0和<=n的数才是有意义的
+    // 把值为 v 的数归位到下标 v-1（萝卜蹲：让 nums[i] = i+1），再扫一遍找第一个不就位的
+    // !!!因为要原地，所以归位的方式是『互换』，而且互换过来的数有可能继续需要互换，所以一次是个循环
+    // !!!注意：停止循环的条件不应该选当前的nums[i]在不在它应该在的位置上(nums[i] !== i + 1)
+    //         而应该看nums[i]想要在的位置上是不是已经是符合条件的数。
+    //         不然对换就会没完没了
+    const n = nums.length
+    for (let i = 0; i < nums.length; i++) {
+        while (nums[i] > 0 && nums[i] <= nums.length && nums[nums[i] - 1] !== nums[i]) {
+            let target = nums[i] - 1
+            let temp = nums[target]
+            nums[target] = nums[i]
+            nums[i] = temp
+        }
+    }
+    for (let i = 0; i < n; i++) {
+        if (nums[i] !== i + 1) {
+            return i + 1
+        }
+    }
+    return n + 1;
+};
+// console.log(firstMissingPositive([3, 4, -1, 1]))
+// console.log(firstMissingPositive([1,1]))
